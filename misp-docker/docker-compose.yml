@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  web:
+    build: web
+    depends_on:
+      - db
+    container_name: misp_web
+    image: misp:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./web/wait-for-it.sh:/usr/local/bin/wait-for-it.sh:ro
+      - /dev/urandom:/dev/random
+      - ${DATA_DIR}/web:/var/www/MISP
+    environment:
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MISP_ADMIN_EMAIL=${MISP_ADMIN_EMAIL}
+      - MISP_ADMIN_PASSPHRASE=${MISP_ADMIN_PASSPHRASE}
+      - MISP_BASEURL=${MISP_BASEURL}
+      - POSTFIX_RELAY_HOST=${POSTFIX_RELAY_HOST}
+      - TIMEZONE=${TIMEZONE}
+    entrypoint: "wait-for-it.sh -t 0 -h db -p 3306 -- /run.sh"
+
+  db:
+    container_name: misp_db
+    image: mysql/mysql-server:5.7
+    restart: unless-stopped
+    volumes:
+      - ${DATA_DIR}/db:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
