@@ -1,12 +1,5 @@
 name: Push to Harbor
-on:
-  push:
-    branches:
-      - "master"
-      - "misp-docker"
-    paths:
-      - "/**"
-
+on: push
 jobs:
   build-misp-docker-image:
     name: Build misp image
