@@ -3,8 +3,7 @@ on: push
 jobs:
   build-misp-docker-image:
     name: Build misp image
-    runs-on: [ self-hosted ]
-
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         id: checkout
